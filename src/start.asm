@@ -40,6 +40,22 @@ stublet:
   call main
   jmp $
 
+; Setup new segment register
+global gdt_flush ; Link that to C code
+extern gdt_ptr
+gdt_flush:
+  lgdt [gdt_ptr]   ; Load GDT with a pointer
+  mov ax, 0x10 ; 0x10 is just a memory offset of the GDT
+  mov ds, ax
+  mov es, ax
+  mov fs, ax
+  mov gs, ax
+  mov ss, ax
+  jmp 0x08:flush2 ; 0x08 is just an offset to CS
+  
+flush2:
+  ret  ; Get back to the C code where you belong !
+
 ; ISR Will be here
 
 
