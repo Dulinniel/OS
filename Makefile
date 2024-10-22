@@ -1,6 +1,6 @@
 ISO_FILE = $(KERNEL_DIR)/dyos.iso
 START_OBJ = $(KERNEL_DIR)/start.o
-KERNEL_BIN = $(KERNEL_DIR)/kernel.bin
+KERNEL_BIN = $(BUILD_DIR)/kernel.bin
 BOOTLOADER_FILE = grub.cfg
 
 MOUNTPOINT = /mnt
@@ -14,29 +14,31 @@ BUILD_DIR = ./build
 GCC_ARGUMENTS = -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -m32 -fno-PIC
 QEMU_ARGUMENTS = -accel tcg,thread=single -cpu core2duo -m 128 -no-reboot -cdrom $(ISO_FILE) -serial stdio -smp 1 -usb -vga std -d int,cpu_reset,guest_errors -D $(LOG_DIR)/qemu_debug.log -boot d
 
-SOURCES = main.c screen.c gdt.c idt.c isr.c
-OBJECTS = $(addprefix $(BUILD_DIR)/, $(SOURCES:.c=.o))
+C_SOURCES = main.c screen.c gdt.c idt.c isr.c
+C_OBJECTS = $(addprefix $(BUILD_DIR)/, $(C_SOURCES:.c=.o))
+ASM_SOURCES = start.asm irq.asm isr.asm
+ASM_OBJECTS = $(addprefix $(BUILD_DIR)/, $(ASM_SOURCES:.asm=.o))
 
 all: debug
 
 # Assemble the assembly
-$(START_OBJ): ./src/start.asm $(BUILD_DIR) $(BOOTLOADER_DIR)
+$(START_OBJ): $(KERNEL_DIR)/%.asm
 	nasm -f elf32 $< -o $@
 
 # Link the C code to the assembly
-$(KERNEL_BIN): $(START_OBJ) $(OBJECTS)
-	ld -m elf_i386 -T ./src/link.ld -o $@ $^
+$(BUILD_DIR)/%.o: $(KERNEL_DIR)/%.asm
+	nasm -f elf32 $< -o $@
 
 # Compile the C files
-$(BUILD_DIR)/%.o: $(KERNEL_DIR)/%.c | $(BUILD_DIR) | $(BOOTLOADER_DIR)
+$(BUILD_DIR)/%.o: $(KERNEL_DIR)/%.c
 	gcc $(GCC_ARGUMENTS) -I $(KERNEL_DIR)/includes -c -o $@ $<
 
 # Create Build direction
-$(BUILD_DIR):
+create-build-dir:
 	mkdir -p $(BUILD_DIR)
 
 # Create GRUB base Config File
-$(BOOTLOADER_DIR):
+create-grub-config:
 	mkdir -p $(BOOTLOADER_DIR)
 	echo 'menuentry "Boot Dynos" {' > $(BOOTLOADER_DIR)/$(BOOTLOADER_FILE)
 	echo '    multiboot /boot/kernel.bin' >> $(BOOTLOADER_DIR)/$(BOOTLOADER_FILE)
@@ -44,7 +46,7 @@ $(BOOTLOADER_DIR):
 	echo '}' >> $(BOOTLOADER_DIR)/$(BOOTLOADER_FILE)
 
 # Burn ISO image
-burn: $(KERNEL_BIN)
+burn: $(BUILD_DIR)
 	@echo "Burning ISO Image..."
 	cp $(KERNEL_BIN) $(BOOT_DIR)
 	genisoimage -o $(ISO_FILE) -R -J $(ISO_DIR)

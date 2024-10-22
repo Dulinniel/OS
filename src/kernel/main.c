@@ -52,6 +52,8 @@ void main()
   gdt_install();
   IDT_install();
   ISR_install();
+  irq_install();
+  __asm__ __volatile__ ("sti"); 
   init_video();
   set_text_color(13, 0);
   print("Welcome to this OS\n\n");

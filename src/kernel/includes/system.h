@@ -35,4 +35,10 @@ struct Regs
 };
 extern void ISR_install();
 
+// IRQ.C
+
+void irq_install_handler(int irq, void (*handler)(struct regs *registers));
+void irq_uninstall_handler(int irq, void (*handler)(struct Regs *registers));
+void irq_install();
+
 #endif
