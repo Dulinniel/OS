@@ -50,10 +50,13 @@ void outportb(unsigned short _port, unsigned char _data)
 void main()
 {
   gdt_install();
+  IDT_install();
+  ISR_install();
   init_video();
   set_text_color(13, 0);
   print("Welcome to this OS\n\n");
   set_text_color(15, 0);
-  print("Hello world!");
+  print("Hello world!\n");
+  print(34 / 0);
   for(;;);
 }

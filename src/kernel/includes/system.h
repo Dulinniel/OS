@@ -20,4 +20,19 @@ extern void init_video();
 extern void gdt_set_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char granular);
 extern void gdt_install();
 
+// IDT.C
+extern void IDT_set_gate(unsigned char num, unsigned long base, unsigned short segment, unsigned char flags);
+extern void IDT_install();
+
+// ISR.C
+
+struct Regs
+{
+  unsigned int gs, fs, es, ds; // pushed the last segments
+  unsigned int edi, esi, ebp, esp, ebx, edx, ecx, eax; // pushed by pusha
+  unsigned int int_no, err_code; // push byte #
+  unsigned int eip, cs, eflags, useresp, ss; // pushed by the processor 
+};
+extern void ISR_install();
+
 #endif

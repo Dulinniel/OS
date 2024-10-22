@@ -2,7 +2,7 @@
 
 #define GDT_TOTAL_ENTRY 3
 #define CODE_SEGMENT    1
-#define DATA_SEGMENT   2
+#define DATA_SEGMENT    2
 
 // Define GDT Entry, pack to avoid compiler interferences such as optimization
 struct GDT_Entry
