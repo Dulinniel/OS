@@ -13,6 +13,7 @@ extern void outportb(unsigned short _port, unsigned char _data);
 extern void clear();
 extern void put_char(unsigned char character);
 extern void print(unsigned char *str);
+extern void print_hex(unsigned int value);
 extern void set_text_color(unsigned char forecolor, unsigned char backcolor);
 extern void init_video();
 
@@ -25,7 +26,6 @@ extern void IDT_set_gate(unsigned char num, unsigned long base, unsigned short s
 extern void IDT_install();
 
 // ISR.C
-
 struct Regs
 {
   unsigned int gs, fs, es, ds; // pushed the last segments
@@ -36,9 +36,13 @@ struct Regs
 extern void ISR_install();
 
 // IRQ.C
-
-void irq_install_handler(int irq, void (*handler)(struct regs *registers));
+void irq_install_handler(int irq, void (*handler)(struct Regs *registers));
 void irq_uninstall_handler(int irq, void (*handler)(struct Regs *registers));
 void irq_install();
+
+// PIT.C
+void timer_install();
+void delay(int tick);
+void timer_phase(int frequency_hz);
 
 #endif

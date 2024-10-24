@@ -53,12 +53,12 @@ void main()
   IDT_install();
   ISR_install();
   irq_install();
-  __asm__ __volatile__ ("sti"); 
+  __asm__ __volatile__ ("sti");
+  //timer_install();
   init_video();
   set_text_color(13, 0);
   print("Welcome to this OS\n\n");
   set_text_color(15, 0);
   print("Hello world!\n");
-  print(34 / 0);
   for(;;);
 }

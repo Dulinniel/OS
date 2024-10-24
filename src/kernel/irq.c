@@ -30,7 +30,7 @@ void *irq_routines[IRQ_HANDLER_AMOUNT] =
   0, 0, 0, 0
 };
 
-void irq_install_handler(int irq, void (*handler)(struct regs *registers))
+void irq_install_handler(int irq, void (*handler)(struct Regs *registers))
 {
   irq_routines[irq] = handler;
 }
@@ -86,7 +86,7 @@ void irq_handler(struct Regs *registers)
   handler =irq_routines[registers->int_no - REMAP_OFFSET];
   if ( handler ) handler(registers);
   // If the IDT entry is out of range, send EOI
-  if ( r->int_no >= IRQ_LAST_ENTRY ) outportb(0x0A, EOI);
+  if ( registers->int_no >= IRQ_LAST_ENTRY ) outportb(0x0A, EOI);
 
   // Send EOI to interrupt controller
   outportb(EOI, EOI);

@@ -51,9 +51,9 @@ gdt_flush:
   mov fs, ax
   mov gs, ax
   mov ss, ax
-  jmp 0x08:flush2  ; 0x08 is just an offset to CS
+  jmp 0x08:flush  ; 0x08 is just an offset to CS
   
-flush2:
+flush:
   ret  ; Get back to the C code where you belong !
 
 ; Define BSS section, storing the stack

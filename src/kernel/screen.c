@@ -102,6 +102,26 @@ void print(unsigned char *text)
   for (int i = 0; i < strlen(text); i++) put_char(text[i]);
 }
 
+void print_hex(unsigned int value) {
+  char hex_chars[] = "0123456789ABCDEF";
+  char buffer[9];  // 8 digits for 32-bit hex value + null terminator
+
+  for (int i = 7; i >= 0; i--) 
+  {
+    // Extract 4 bits
+    buffer[i] = hex_chars[value & 0xF];
+    // Bitshift 4 bits to get the next hexadecimal number
+    value >>= 4;
+  }
+
+  buffer[8] = '\0'; 
+
+  // Display '0x'
+  print("0x");
+  // Display value  
+  print(buffer);
+}
+
 /*
 BackColor:        ForeColor:
 0   BLACK         8   DARK GREY
