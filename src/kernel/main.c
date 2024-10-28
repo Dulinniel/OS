@@ -1,28 +1,28 @@
 #include <system.h>
 
 // copy count bytes of data from src to dest, return 'dest'
-unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count)
+unsigned short *memcpy(unsigned short *destination, const unsigned short *source, int count)
 {
-  const char *sp = (const char)src;
-  char *dp = (char *)dest;
-  for (int i = count; i != 0; i--) *dp++ = *sp++;
-  return dest;
+  const unsigned short *source_pointer = (const short)source;
+  short *desination_pointer = (short *)destination;
+  for (int i = count; i != 0; i--) *desination_pointer++ = *source_pointer++;
+  return destination;
 }
 
 // Set count bytes in dest to val, return 'dest'
-unsigned char *memset(unsigned char *dest, unsigned char val, int count)
+unsigned char *memset(unsigned char *destination, unsigned char value, int count)
 {
-  char *temp = (char*)dest;
-  for (int i = count; i != 0; i--) *temp++ = val;
-  return dest;
+  unsigned char *temp = (char*)destination;
+  for (int i = count; i != 0; i--) *temp++ = value;
+  return destination;
 }
 
 // Memset but with 16 bits
-unsigned short *memsetw(unsigned short *dest, unsigned short val, int count)
+unsigned short *memsetw(unsigned short *destination, unsigned short value, int count)
 {
-  unsigned short *temp = (unsigned short *)dest;
-  for (int i = count; i != 0; i--) *temp++ = val;
-  return dest;
+  unsigned short *temp = (unsigned short *)destination;
+  for (int i = count; i != 0; i--) *temp++ = value;
+  return destination;
 }
 
 // Return the length of a string in bytes
@@ -49,16 +49,16 @@ void outportb(unsigned short _port, unsigned char _data)
 
 void main()
 {
+  init_video();
   gdt_install();
   IDT_install();
   ISR_install();
   irq_install();
-  __asm__ __volatile__ ("sti");
   //timer_install();
-  init_video();
   set_text_color(13, 0);
-  print("Welcome to this OS\n\n");
+  println("Welcome to this OS\n");
   set_text_color(15, 0);
-  print("Hello world!\n");
+  println("Hello world!\n");
+  __asm__ __volatile__("sti");
   for(;;);
 }

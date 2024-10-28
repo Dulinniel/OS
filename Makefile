@@ -15,10 +15,13 @@ CC = gcc
 LD = ld
 ASM = nasm
 
+GDB_ATTACH= -s -S
+#GDB_ATTACH=
+
 NASM_ARGUMENTS = -f elf32
 LD_ARGUMENTS = -m elf_i386 -T $(LINKER_SCRIPT)
-CFLAGS = -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -m32 -fno-PIC
-QEMU_ARGUMENTS = -accel tcg,thread=single -cpu core2duo -m 128 -no-reboot -s -S -cdrom $(ISO_FILE) -serial stdio -smp 1 -usb -vga std -d int,cpu_reset,guest_errors -D $(LOG_DIR)/qemu_debug.log -boot d
+CFLAGS = -g -Wall -O -fstrength-reduce -fomit-frame-pointer -finline-functions -nostdinc -fno-builtin -m32 -fno-PIC
+QEMU_ARGUMENTS = -accel tcg,thread=single -cpu core2duo -m 128 -no-reboot $(GDB_ATTACH) -cdrom $(ISO_FILE) -serial stdio -smp 1 -usb -vga std -d int,cpu_reset,guest_errors -D $(LOG_DIR)/qemu_debug.log -boot d
 
 C_SOURCES = $(wildcard $(KERNEL_DIR)/*.c)
 ASM_SOURCES = $(wildcard ./src/*.asm)

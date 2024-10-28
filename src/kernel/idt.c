@@ -20,7 +20,6 @@ struct IDT_Ptr
 struct IDT_Entry IDT_entry[IDT_ENTRIES];
 struct IDT_Ptr IDT_ptr;
 
-extern void division_by_zero_handler();
 extern void IDT_Load();
 /*
  31              15                             4               0
@@ -46,4 +45,22 @@ void IDT_install()
   memset(&IDT_entry, 0, sizeof(struct IDT_Entry) * IDT_ENTRIES);
 
   IDT_Load();
+}
+
+void check_idt() 
+{
+  for (int i = 0; i < IDT_ENTRIES; i++) 
+  {
+    print("IDT Entry ");
+    print_hex(i);
+    print(": Base Low = ");
+    print_hex(IDT_entry[i].base_low);
+    print(", Base High = ");
+    print_hex(IDT_entry[i].base_high);
+    print(", Segment = ");
+    print_hex(IDT_entry[i].segment_kernel);
+    print(", Type = ");
+    print_hex(IDT_entry[i].type_attributes);
+    print("\n");
+  }
 }

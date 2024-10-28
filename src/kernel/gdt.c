@@ -26,25 +26,6 @@ struct GDT_Ptr gdt_ptr;
 
 extern void gdt_flush();
 
-void print_segment_registers() 
-{
-  unsigned short cs, ds, ss;
-
-  // Obtenir les valeurs des registres
-  __asm__ __volatile__("mov %%cs, %0" : "=r"(cs));
-  __asm__ __volatile__("mov %%ds, %0" : "=r"(ds));
-  __asm__ __volatile__("mov %%ss, %0" : "=r"(ss));
-
-  // Afficher les valeurs (en supposant que tu aies une fonction print_hex)
-  print("CS: ");
-  print_hex(cs);
-  print("\nDS: ");
-  print_hex(ds);
-  print("\nSS: ");
-  print_hex(ss);
-  print("\n");
-}
-
 void gdt_set_gate(int num, unsigned long base, unsigned long limit, unsigned char access, unsigned char granular)
 {
   // Setup Descriptor table
@@ -78,6 +59,5 @@ void gdt_install()
 
   // Flush old GDT
   gdt_flush();
-  print_segment_registers();
 
 }

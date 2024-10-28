@@ -2,17 +2,18 @@
 #define __SYSTEM_H
 
 // MAIN.C
-extern unsigned char *memcpy(unsigned char *dest, const unsigned char *src, int count);
-extern unsigned char *memset(unsigned char *dest, unsigned char val, int count);
-extern unsigned short *memsetw(unsigned short *dest, unsigned short val, int count);
+extern unsigned short *memcpy(unsigned short *destination, const unsigned short *source, int count);
+extern unsigned char *memset(unsigned char *destination, unsigned char value, int count);
+extern unsigned short *memsetw(unsigned short *destination, unsigned short value, int count);
 extern int strlen(const char *str);
 extern unsigned char inportb(unsigned short _port);
 extern void outportb(unsigned short _port, unsigned char _data);
 
 // SCREEN.C
 extern void clear();
-extern void put_char(unsigned char character);
-extern void print(unsigned char *str);
+extern void put_char(char character);
+extern void print(char *text);
+void println(char *text);
 extern void print_hex(unsigned int value);
 extern void set_text_color(unsigned char forecolor, unsigned char backcolor);
 extern void init_video();
@@ -24,6 +25,7 @@ extern void gdt_install();
 // IDT.C
 extern void IDT_set_gate(unsigned char num, unsigned long base, unsigned short segment, unsigned char flags);
 extern void IDT_install();
+extern void check_idt();
 
 // ISR.C
 struct Regs

@@ -17,7 +17,10 @@ void scroll(void)
   {
     // Move current text chunk back in the buffer by 1 line
     unsigned temp = cursor_y - LAST_ROW + 1;
-    memcpy(text_memory_ptr, text_memory_ptr + temp * SCREEN_WIDTH, ( LAST_ROW - temp ) * SCREEN_WIDTH * 2);
+    unsigned short *source_ptr = text_memory_ptr + (temp * SCREEN_WIDTH);
+    unsigned short *destination_ptr = text_memory_ptr;
+
+    memcpy(destination_ptr, source_ptr, ( LAST_ROW - temp ) * SCREEN_WIDTH * sizeof(unsigned short));
 
     // Set chunk of memory occupying last line of text to blank
     memsetw(text_memory_ptr + ( LAST_ROW - temp ) * SCREEN_WIDTH, blank, SCREEN_WIDTH);
@@ -27,15 +30,14 @@ void scroll(void)
 
 void move_cursor(void)
 {
-
   // Equation to find index in a linear chunk of memory
   // index = (y_value * width_of_screen) + x_value;
   unsigned temp = cursor_y * SCREEN_WIDTH + cursor_x;
 
   // Set where the cursor is supposed to be next
   // VGA specific programming documents: http://www.brackeen.com/home/vga 
-
-  outportb(0x324, CRT_LOW_BYTE_INDEX);
+   // VGA Cursor Ports: CRT Control Register - Index is 0x3D4, Data is 0x3D5
+  outportb(0x3D4, CRT_LOW_BYTE_INDEX);
   outportb(0x3D5, temp >> 8);
   outportb(0x3D4, CRT_HIGH_BYTE_INDEX);
   outportb(0x3D5, temp);
@@ -54,7 +56,7 @@ void clear()
   move_cursor();
 }
 
-void put_char(unsigned char character)
+void put_char(char character)
 {
   unsigned short *where;
   unsigned color = attribute << 8;
@@ -97,29 +99,29 @@ void put_char(unsigned char character)
   move_cursor();
 }
 
-void print(unsigned char *text)
+void print(char *text)
 {
   for (int i = 0; i < strlen(text); i++) put_char(text[i]);
 }
 
-void print_hex(unsigned int value) {
+void println(char *text)
+{
+  print(text);
+  put_char('\n');
+}
+
+void print_hex(unsigned int value) 
+{
   char hex_chars[] = "0123456789ABCDEF";
   char buffer[9];  // 8 digits for 32-bit hex value + null terminator
-
+  buffer[8] = '\0';
+  print("0x");
   for (int i = 7; i >= 0; i--) 
   {
     // Extract 4 bits
-    buffer[i] = hex_chars[value & 0xF];
     // Bitshift 4 bits to get the next hexadecimal number
-    value >>= 4;
+    put_char(hex_chars[(value >> (i * 4)) & 0xF]);
   }
-
-  buffer[8] = '\0'; 
-
-  // Display '0x'
-  print("0x");
-  // Display value  
-  print(buffer);
 }
 
 /*

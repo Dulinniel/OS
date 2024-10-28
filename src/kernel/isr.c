@@ -109,8 +109,10 @@ void fault_handler(struct Regs *registers)
   {
     // Display Exception in red
     set_text_color(0, 12);
-    print(exception_messages[registers->int_no]);
-    print(" Exception. System Halted\n");
+    print((char*)exception_messages[(int)registers->int_no]);
+    println(" Exception. System Halted");
+    print("Error code: ");
+    print_hex((char*)registers->err_code);
     for (;;);
   }
 }
