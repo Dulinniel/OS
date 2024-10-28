@@ -15,8 +15,8 @@ CC = gcc
 LD = ld
 ASM = nasm
 
-GDB_ATTACH= -s -S
-#GDB_ATTACH=
+#GDB_ATTACH= -s -S
+GDB_ATTACH=
 
 NASM_ARGUMENTS = -f elf32
 LD_ARGUMENTS = -m elf_i386 -T $(LINKER_SCRIPT)

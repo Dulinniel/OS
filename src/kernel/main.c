@@ -1,6 +1,6 @@
 #include <system.h>
 
-// copy count bytes of data from src to dest, return 'dest'
+// copy count bytes of data from src to dest, return 'destination'
 unsigned short *memcpy(unsigned short *destination, const unsigned short *source, int count)
 {
   const unsigned short *source_pointer = (const short)source;
@@ -9,7 +9,7 @@ unsigned short *memcpy(unsigned short *destination, const unsigned short *source
   return destination;
 }
 
-// Set count bytes in dest to val, return 'dest'
+// Set count bytes in dest to val, return 'destination'
 unsigned char *memset(unsigned char *destination, unsigned char value, int count)
 {
   unsigned char *temp = (char*)destination;
@@ -55,6 +55,13 @@ void main()
   ISR_install();
   irq_install();
   //timer_install();
+  set_text_color(9, 0);
+  for (int i = 0; i < 300; i++)
+  {
+    print_hex(i);
+  }
+  print('\n');
+  print('\n');  
   set_text_color(13, 0);
   println("Welcome to this OS\n");
   set_text_color(15, 0);

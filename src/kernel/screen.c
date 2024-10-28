@@ -16,8 +16,10 @@ void scroll(void)
   if ( cursor_y >= LAST_ROW )
   {
     // Move current text chunk back in the buffer by 1 line
+    // 26 - 25 = 1 + 1 = 2
     unsigned temp = cursor_y - LAST_ROW + 1;
-    unsigned short *source_ptr = text_memory_ptr + (temp * SCREEN_WIDTH);
+    // "0x0000009F" + ( 2 * 80 ) = 
+    unsigned short *source_ptr = &text_memory_ptr + (temp * SCREEN_WIDTH);
     unsigned short *destination_ptr = text_memory_ptr;
 
     memcpy(destination_ptr, source_ptr, ( LAST_ROW - temp ) * SCREEN_WIDTH * sizeof(unsigned short));
