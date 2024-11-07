@@ -5,27 +5,28 @@
 #define CRT_HIGH_BYTE_INDEX   15
 #define CRT_LOW_BYTE_INDEX    14
 #define VIDEO_MEMORY_ADDRESS  0xB8000
+#define CRT_INDEX             0x3D4
+#define CRT_DATA              0x3D5
+#define TAB_SIZE              4
 
-unsigned short *text_memory_ptr;
+unsigned short *text_memory_ptr = (unsigned short *)VIDEO_MEMORY_ADDRESS;
 int attribute = 0x0F;
 int cursor_x, cursor_y = 0;
 
 void scroll(void)
 {
-  unsigned blank = blank = 0x20 | ( attribute << 8 );
+  unsigned blank = 0x20 | ( attribute << 8 );
   if ( cursor_y >= LAST_ROW )
   {
     // Move current text chunk back in the buffer by 1 line
-    // 26 - 25 = 1 + 1 = 2
-    unsigned temp = cursor_y - LAST_ROW + 1;
-    // "0x0000009F" + ( 2 * 80 ) = 
-    unsigned short *source_ptr = &text_memory_ptr + (temp * SCREEN_WIDTH);
-    unsigned short *destination_ptr = text_memory_ptr;
+    unsigned temp = cursor_y - LAST_ROW;
+    unsigned short* source_ptr = text_memory_ptr + (temp * SCREEN_WIDTH);
+    unsigned short* destination_ptr = text_memory_ptr;
 
-    memcpy(destination_ptr, source_ptr, ( LAST_ROW - temp ) * SCREEN_WIDTH * sizeof(unsigned short));
+    memcpy(&destination_ptr, &source_ptr + (temp * SCREEN_WIDTH), ( LAST_ROW - temp ) * SCREEN_WIDTH * sizeof(unsigned short));
 
     // Set chunk of memory occupying last line of text to blank
-    memsetw(text_memory_ptr + ( LAST_ROW - temp ) * SCREEN_WIDTH, blank, SCREEN_WIDTH);
+    memsetw(&source_ptr + ( LAST_ROW - temp ) * SCREEN_WIDTH, blank, SCREEN_WIDTH);
     cursor_y = LAST_ROW - 1;
   }
 }
@@ -38,11 +39,11 @@ void move_cursor(void)
 
   // Set where the cursor is supposed to be next
   // VGA specific programming documents: http://www.brackeen.com/home/vga 
-   // VGA Cursor Ports: CRT Control Register - Index is 0x3D4, Data is 0x3D5
-  outportb(0x3D4, CRT_LOW_BYTE_INDEX);
-  outportb(0x3D5, temp >> 8);
-  outportb(0x3D4, CRT_HIGH_BYTE_INDEX);
-  outportb(0x3D5, temp);
+  // VGA Cursor Ports: CRT Control Register - Index is 0x3D4, Data is 0x3D5
+  outportb(CRT_INDEX, CRT_LOW_BYTE_INDEX);
+  outportb(CRT_DATA, temp >> 8);
+  outportb(CRT_INDEX, CRT_HIGH_BYTE_INDEX);
+  outportb(CRT_DATA, temp);
 }
 
 void clear()
@@ -71,7 +72,7 @@ void put_char(char character)
     break;
   // Tab
   case 0x09:
-    cursor_x = ( cursor_x + 4 ) & ~(4 - 1);
+    cursor_x = ( cursor_x + TAB_SIZE ) & ~(TAB_SIZE - 1);
     break;
   // CR
   case '\r':
@@ -124,6 +125,7 @@ void print_hex(unsigned int value)
     // Bitshift 4 bits to get the next hexadecimal number
     put_char(hex_chars[(value >> (i * 4)) & 0xF]);
   }
+  print("\n");
 }
 
 /*
@@ -145,6 +147,5 @@ void set_text_color(unsigned char forecolor, unsigned char backcolor)
 
 void init_video(void)
 {
-  text_memory_ptr = ( unsigned short *) VIDEO_MEMORY_ADDRESS;
   clear();
 }

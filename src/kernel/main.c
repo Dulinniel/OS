@@ -60,6 +60,7 @@ void main()
   {
     print_hex(i);
   }
+  clear();
   print('\n');
   print('\n');  
   set_text_color(13, 0);

@@ -21,7 +21,7 @@ void timer_handler(struct Regs *registers)
   if ( timer_tick % DEFAULT_TIMER_INTERRUPT == 0 ) 
   {
     set_text_color(9, 0);
-    print("One second has passed\n");
+    println("One second has passed");
   }
 }
 
