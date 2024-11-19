@@ -83,7 +83,7 @@ void irq_handler(struct Regs *registers)
   void (*handler)(struct Regs *registers);
 
   // Check if a custom handler exist for the selected IRQ
-  handler =irq_routines[registers->int_no - REMAP_OFFSET];
+  handler = irq_routines[registers->int_no - REMAP_OFFSET];
   if ( handler ) handler(registers);
   // If the IDT entry is out of range, send EOI
   if ( registers->int_no >= IRQ_LAST_ENTRY ) outportb(0x0A, EOI);

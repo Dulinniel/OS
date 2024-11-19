@@ -3,8 +3,8 @@
 // copy count bytes of data from src to dest, return 'destination'
 unsigned short *memcpy(unsigned short *destination, const unsigned short *source, int count)
 {
-  const unsigned short *source_pointer = (const short)source;
-  short *desination_pointer = (short *)destination;
+  const unsigned short *source_pointer = source;
+  unsigned short *desination_pointer = destination;
   for (int i = count; i != 0; i--) *desination_pointer++ = *source_pointer++;
   return destination;
 }
@@ -25,20 +25,32 @@ unsigned short *memsetw(unsigned short *destination, unsigned short value, int c
   return destination;
 }
 
+void *memmove(void *destination, const void *source, char size)
+{
+  char *dest = destination;
+  const char *src = source;
+  char *last_src = src + (size - 1);
+  char *last_dest = dest + (size - 1);
+  if ( dest < src ) while (size--) *dest++ = *src++;
+  else while (size--) *last_dest-- = *last_src--;
+  
+  return dest;
+}
+
 // Return the length of a string in bytes
 int strlen(const char *str)
 {
-  int val;
-  for (val = 0; *str != '\0'; str++) val++;
-  return val;
+  int length;
+  for (length = 0; *str != '\0'; str++) length++;
+  return length;
 }
 
 // Reading from the I/O ports to get data
 unsigned char inportb(unsigned short _port)
 {
-  unsigned char rv;
-  __asm__ __volatile__ ("inb %1, %0" : "=a" (rv) : "dN" (_port));
-  return rv;
+  unsigned char read_value;
+  __asm__ __volatile__ ("inb %1, %0" : "=a" (read_value) : "dN" (_port));
+  return read_value;
 }
 
 // Writing to I/O ports to send byte to devices
@@ -56,11 +68,11 @@ void main()
   irq_install();
   //timer_install();
   set_text_color(9, 0);
-  for (int i = 0; i < 300; i++)
+  for (int i = 0; i < 601; i++)
   {
     print_hex(i);
+    print("\n");
   }
-  clear();
   print('\n');
   print('\n');  
   set_text_color(13, 0);

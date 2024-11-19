@@ -15,18 +15,27 @@ int cursor_x, cursor_y = 0;
 
 void scroll(void)
 {
-  unsigned blank = 0x20 | ( attribute << 8 );
-  if ( cursor_y >= LAST_ROW )
+  // Blank character
+  unsigned short blank = 0x20 | (attribute << 8);
+
+  // Check if we pass the last line
+  if (cursor_y >= LAST_ROW)
   {
-    // Move current text chunk back in the buffer by 1 line
-    unsigned temp = cursor_y - LAST_ROW;
+    // Compute the line offset
+    unsigned temp = cursor_y - LAST_ROW + 1;
+
+    // Shift up the visible lines
     unsigned short* source_ptr = text_memory_ptr + (temp * SCREEN_WIDTH);
     unsigned short* destination_ptr = text_memory_ptr;
 
-    memcpy(&destination_ptr, &source_ptr + (temp * SCREEN_WIDTH), ( LAST_ROW - temp ) * SCREEN_WIDTH * sizeof(unsigned short));
+    // Move those lines
+    memcpy(destination_ptr, source_ptr, (LAST_ROW - temp) * SCREEN_WIDTH * sizeof(unsigned short));
 
-    // Set chunk of memory occupying last line of text to blank
-    memsetw(&source_ptr + ( LAST_ROW - temp ) * SCREEN_WIDTH, blank, SCREEN_WIDTH);
+    // Erase last line
+    unsigned short* blank_start = text_memory_ptr + (LAST_ROW - temp) * SCREEN_WIDTH;
+    memsetw(blank_start, blank, SCREEN_WIDTH);
+
+    // Move cursor
     cursor_y = LAST_ROW - 1;
   }
 }
@@ -125,7 +134,6 @@ void print_hex(unsigned int value)
     // Bitshift 4 bits to get the next hexadecimal number
     put_char(hex_chars[(value >> (i * 4)) & 0xF]);
   }
-  print("\n");
 }
 
 /*

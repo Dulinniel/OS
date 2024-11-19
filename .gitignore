@@ -4,6 +4,7 @@ log
 build/*
 log/*
 iso/*
+tests/*
 *.cfg
 *.iso
 *.bin

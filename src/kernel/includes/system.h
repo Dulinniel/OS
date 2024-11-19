@@ -5,6 +5,7 @@
 extern unsigned short *memcpy(unsigned short *destination, const unsigned short *source, int count);
 extern unsigned char *memset(unsigned char *destination, unsigned char value, int count);
 extern unsigned short *memsetw(unsigned short *destination, unsigned short value, int count);
+extern void *memmove(void * destination, const void * source, char size);
 extern int strlen(const char *str);
 extern unsigned char inportb(unsigned short _port);
 extern void outportb(unsigned short _port, unsigned char _data);
